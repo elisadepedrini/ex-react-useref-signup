@@ -1,12 +1,12 @@
-import { useMemo, useState } from "react"
+import { useMemo, useState, useRef } from "react"
 
 function App() {
 
-const [nameComplete, setNameComplete] = useState("")
+const nameCompleteRef = useRef()
+const specializationRef = useRef()
+const yearExperienceRef = useRef()
 const [username, setUsername] = useState("")
 const [password, setPassword] = useState("")
-const [specialization, setSpecialization] = useState("")
-const [yearExperience, setYearExperience] = useState("")
 const [description, setDescription] = useState("")
 
 
@@ -37,8 +37,14 @@ const descrizioneValida = useMemo(() => {
 }, [description])
 
 
+
 const submit = (e) => {
   e.preventDefault()
+
+  // Form non controllato
+  const nameComplete = nameCompleteRef.current.value
+  const specialization = specializationRef.current.value
+  const yearExperience = yearExperienceRef.current.value
 
   if (!nameComplete.trim() ||
       !username.trim() ||
@@ -76,8 +82,7 @@ const submit = (e) => {
       <form onSubmit={submit}>
         <input
           type="text"
-          value={nameComplete}
-          onChange={(e) => setNameComplete(e.target.value)}
+          ref={nameCompleteRef}
           placeholder="Nome completo"
           />
         <input
@@ -98,7 +103,7 @@ const submit = (e) => {
           <strong style={{ color: passwordValida ? "green" : "red" }}>
             {passwordValida ? "Password valida" : "Almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo"}
           </strong>
-        <select value={specialization} onChange={(e) => setSpecialization(e.target.value)}>
+        <select ref={specializationRef}>
           <option value="">Seleziona specializzazione</option>
           <option value="Full Stack">Full Stack</option>
           <option value="Frontend">Frontend</option>
@@ -106,8 +111,7 @@ const submit = (e) => {
           </select>
         <input
           type="number"
-          value={yearExperience}
-          onChange={(e) => setYearExperience(e.target.value)}
+          ref={yearExperienceRef}
           placeholder="Anni di esperienza"
           />
           <textarea onChange={(e) => setDescription(e.target.value)} value={description}></textarea>
@@ -159,3 +163,12 @@ export default App
 // Suggerimento: Per semplificare la validazione, puoi definire tre stringhe con i caratteri validi e usare .includes() per controllare se i caratteri appartengono a una di queste categorie:
 
 // Per ciascuno dei campi validati in tempo reale, mostrare un messaggio di errore (rosso) nel caso non siano validi, oppure un messaggio di conferma (verde) nel caso siano validi.
+
+
+
+// 📌 Milestone 3: Convertire i Campi Non Controllati
+// Non tutti i campi del form necessitano di essere aggiornati a ogni carattere digitato. Alcuni di essi non influenzano direttamente l’interfaccia mentre l’utente li compila, quindi è possibile gestirli in modo più efficiente.
+
+// Analizza il form: Identifica quali campi devono rimanere controllati e quali invece possono essere non controllati senza impattare l’esperienza utente.
+// Converti i campi non controllati: Usa useRef() per gestirli e recuperare il loro valore solo al momento del submit.
+// Assicurati che la validazione continui a funzionare: Anche se un campo non è controllato, deve comunque essere validato correttamente quando l’utente invia il form.
