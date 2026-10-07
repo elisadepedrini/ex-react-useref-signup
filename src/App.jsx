@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
 function App() {
 
@@ -9,6 +9,34 @@ const [specialization, setSpecialization] = useState("")
 const [yearExperience, setYearExperience] = useState("")
 const [description, setDescription] = useState("")
 
+
+const letters = "abcdefghijklmnopqrstuvwxyz";
+const numbers = "0123456789";
+const symbols = "!@#$%^&*()-_=+[]{}|;:'\\,.<>?/`~";
+
+// Username valido
+const usernameValido = useMemo(() => {
+  const soloAlfanumerici = username.split("").every(el =>
+    letters.includes(el.toLowerCase()) ||
+    numbers.includes(el.toLowerCase()))
+    return username.trim().length >= 6 && soloAlfanumerici
+}, [username])
+
+// Password valida
+const passwordValida = useMemo(() => {
+  const haLettera = password.split("").some(el => letters.includes(el.toLowerCase()))
+  const haNumero = password.split("").some(el => numbers.includes(el.toLowerCase()))
+  const haSimbolo = password.split("").some(el => symbols.includes(el.toLowerCase()))
+  return password.trim().length >= 8 && haLettera && haNumero && haSimbolo
+}, [password])
+
+// Descrizione valida
+const descrizioneValida = useMemo(() => {
+  const senzaSpazi = description.trim().length
+  return senzaSpazi >= 100 && senzaSpazi <= 1000
+}, [description])
+
+
 const submit = (e) => {
   e.preventDefault()
 
@@ -17,7 +45,10 @@ const submit = (e) => {
       !password.trim() ||
       !specialization ||
       !yearExperience ||
-      !description.trim())
+      !description.trim() ||
+      !usernameValido ||
+      !passwordValida ||
+      !descrizioneValida )
       {
         alert("Compila tutti i campi")
         return
@@ -55,12 +86,18 @@ const submit = (e) => {
           onChange={(e) => setUsername(e.target.value)}
           placeholder="Username"
           />
+        <strong style={{ color: usernameValido ? "green" : "red" }}>
+          {usernameValido ? "Username valido" : "Almeno 6 caratteri, solo lettere e numeri"}
+        </strong>
         <input
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           placeholder="Password"
           />
+          <strong style={{ color: passwordValida ? "green" : "red" }}>
+            {passwordValida ? "Password valida" : "Almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo"}
+          </strong>
         <select value={specialization} onChange={(e) => setSpecialization(e.target.value)}>
           <option value="">Seleziona specializzazione</option>
           <option value="Full Stack">Full Stack</option>
@@ -74,6 +111,9 @@ const submit = (e) => {
           placeholder="Anni di esperienza"
           />
           <textarea onChange={(e) => setDescription(e.target.value)} value={description}></textarea>
+          <strong style={{ color: descrizioneValida ? "green" : "red" }}>
+            {descrizioneValida ? "Descrizione valida" : "Deve contenere tra 100 e 1000 caratteri"}
+          </strong>
 
           <button type="submit">Conferma</button>
       </form>
@@ -105,3 +145,17 @@ export default App
 // La Specializzazione sia selezionata
 
 // Al submit, se il form è valido, stampa in console i dati.
+
+
+// 📌 Milestone 2: Validare in tempo reale
+// Aggiungere la validazione in tempo reale dei seguenti campi:
+
+// ✅ Username: Deve contenere solo caratteri alfanumerici e almeno 6 caratteri (no spazi o simboli).
+
+// ✅ Password: Deve contenere almeno 8 caratteri, 1 lettera, 1 numero e 1 simbolo.
+
+// ✅ Descrizione: Deve contenere tra 100 e 1000 caratteri (senza spazi iniziali e finali).
+
+// Suggerimento: Per semplificare la validazione, puoi definire tre stringhe con i caratteri validi e usare .includes() per controllare se i caratteri appartengono a una di queste categorie:
+
+// Per ciascuno dei campi validati in tempo reale, mostrare un messaggio di errore (rosso) nel caso non siano validi, oppure un messaggio di conferma (verde) nel caso siano validi.
